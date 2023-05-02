@@ -1,0 +1,79 @@
+﻿@using WebAppEmpact.Helper;
+@model Pagination<NewsViewModel>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h1 class="mb-3 text-center text-uppercase">News</h1>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Search by keyword: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-secondary" />
+            <a asp-action="Index" class="btn btn-secondary">Back to All News</a>
+            <a type="button" class="btn btn-secondary float-end" asp-controller="News" asp-action="AddNews">Add News</a>
+        </p>
+    </div>
+</form>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th class="table-dark">Index</th>
+            <th class="table-dark">
+                Title
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["TitleSortParm"]" asp-route-pageNumber="@(Model.PageIndex)">
+                    <span data-bs-toggle="tooltip" title="Sorting">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                             class="bi bi-arrow-down-up sorting-arrows" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
+                        </svg>
+                    </span>
+                </a>
+            </th>
+            <th class="table-dark">Description</th>
+            <th class="table-dark">
+                Publication Date
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["DateSortParm"]" asp-route-pageNumber="@(Model.PageIndex)">
+                    <span data-bs-toggle="tooltip" title="Sorting">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up sorting-arrows" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z" />
+                        </svg>
+                    </span>
+                </a>
+            </th>
+            <th class="table-dark">Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int indexTable = (Model.PageIndex - 1) * 7;
+        }
+        @foreach (var news in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        indexTable++;
+                    } @indexTable
+                </td>
+                <td>@news.Title</td>
+                <td>@news.Description</td>
+                <td>@news.PublicationDate.ToString("yyyy/MM/dd hh:mm")</td>
+                <td>
+                    <a href=@news.Link target="_blank">Link</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<div class="d-flex justify-content-center">
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-secondary @prevDisabled">Previous Page</a>
+    <a asp-action="Index" asp-route-sortOrder="@ViewData["CurrentSort"]" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-secondary @nextDisabled ms-2">Next Page</a>
+</div>
